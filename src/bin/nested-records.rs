@@ -65,7 +65,7 @@ fn main() -> anyhow::Result<()> {
     let mut writer = Writer::new(
         &schema,
         File::create(format!(
-            "{}/data/nested-records.avro",
+            "{}/data/nested_records.avro",
             env!("CARGO_MANIFEST_DIR")
         ))?,
     );
@@ -78,7 +78,7 @@ fn main() -> anyhow::Result<()> {
             ("f1_2".into(), 10.into()),
             (
                 "f1_3".into(),
-                Value::Record(vec![("f1_3_1".into(), (3.14).into())]),
+                Value::Record(vec![("f1_3_1".into(), (std::f64::consts::PI).into())]),
             ),
         ]),
     );
@@ -105,7 +105,7 @@ fn main() -> anyhow::Result<()> {
             ("f1_2".into(), 20.into()),
             (
                 "f1_3".into(),
-                Value::Record(vec![("f1_3_1".into(), (3.14).into())]),
+                Value::Record(vec![("f1_3_1".into(), (std::f64::consts::PI).into())]),
             ),
         ]),
     );
@@ -117,6 +117,7 @@ fn main() -> anyhow::Result<()> {
         ])]),
     );
     writer.append(record)?;
+    writer.flush()?;
 
     Ok(())
 }
