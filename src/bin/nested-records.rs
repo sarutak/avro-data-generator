@@ -56,6 +56,40 @@ fn main() -> anyhow::Result<()> {
                         }
                     ]
                 }
+            },  {
+                "name": "f3",
+                "type": [
+                    "null",
+                    {
+                        "name": "record5",
+                        "namespace": "ns5",
+                        "type": "record",
+                        "fields": [
+                            {
+                                "name": "f3_1",
+                                "type": "string"
+                            }
+                        ]
+                    }
+                ],
+                "default": null
+            },  {
+                "name": "f4",
+                "type": "array",
+                "items": [
+                    "null",
+                    {
+                        "name": "record6",
+                        "namespace": "ns6",
+                        "type": "record",
+                        "fields": [
+                            {
+                                "name": "f4_1",
+                                "type": "long"
+                            }
+                        ]
+                    }
+                ]
             }
         ]
     }
@@ -78,7 +112,7 @@ fn main() -> anyhow::Result<()> {
             ("f1_2".into(), 10.into()),
             (
                 "f1_3".into(),
-                Value::Record(vec![("f1_3_1".into(), (std::f64::consts::PI).into())]),
+                Value::Record(vec![("f1_3_1".into(), (3.140).into())]),
             ),
         ]),
     );
@@ -95,6 +129,23 @@ fn main() -> anyhow::Result<()> {
             ]),
         ]),
     );
+    record.put(
+        "f3",
+        Value::Union(
+            1,
+            Box::new(Value::Record(vec![("f3_1".into(), "xyz".into())])),
+        ),
+    );
+    record.put(
+        "f4",
+        Value::Array(vec![
+            Value::Union(
+                1,
+                Box::new(Value::Record(vec![("f4_1".into(), 200_i64.into())])),
+            ),
+            Value::Union(0, Box::new(Value::Null)),
+        ]),
+    );
     writer.append(record)?;
 
     let mut record = Record::new(writer.schema()).unwrap();
@@ -105,7 +156,7 @@ fn main() -> anyhow::Result<()> {
             ("f1_2".into(), 20.into()),
             (
                 "f1_3".into(),
-                Value::Record(vec![("f1_3_1".into(), (std::f64::consts::PI).into())]),
+                Value::Record(vec![("f1_3_1".into(), (3.140).into())]),
             ),
         ]),
     );
@@ -115,6 +166,17 @@ fn main() -> anyhow::Result<()> {
             ("f2_1".into(), false.into()),
             ("f2_2".into(), (10.2_f32).into()),
         ])]),
+    );
+    record.put("f3", Value::Union(0, Box::new(Value::Null)));
+    record.put(
+        "f4",
+        Value::Array(vec![
+            Value::Union(0, Box::new(Value::Null)),
+            Value::Union(
+                1,
+                Box::new(Value::Record(vec![("f4_1".into(), 300_i64.into())])),
+            ),
+        ]),
     );
     writer.append(record)?;
     writer.flush()?;
